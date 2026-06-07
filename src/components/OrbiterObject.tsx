@@ -6,7 +6,7 @@ import * as THREE from "three";
 
 type ShapeType = "square" | "rectangle" | "circle";
 
-interface OrbiterProps {
+interface Props {
   initialPosition: THREE.Vector3;
   orbitAxis: THREE.Vector3;
   orbitSpeed: number;
@@ -22,24 +22,24 @@ export default function OrbiterObject({
   pulsePhase,
   pulseSpeed,
   shape,
-}: OrbiterProps) {
+}: Props) {
   const groupRef = useRef<THREE.Group>(null);
   const posRef = useRef<THREE.Vector3>(initialPosition.clone());
   const quatRef = useRef(new THREE.Quaternion());
 
   const { fillGeo, edgeGeo, circlePoints } = useMemo(() => {
     if (shape === "square") {
-      const geo = new THREE.PlaneGeometry(2.8, 2.8);
+      const geo = new THREE.PlaneGeometry(1.6, 1.6);
       return { fillGeo: geo, edgeGeo: new THREE.EdgesGeometry(geo), circlePoints: null };
     } else if (shape === "rectangle") {
-      const geo = new THREE.PlaneGeometry(3.8, 2.4);
+      const geo = new THREE.PlaneGeometry(2.2, 1.4);
       return { fillGeo: geo, edgeGeo: new THREE.EdgesGeometry(geo), circlePoints: null };
     } else {
-      const geo = new THREE.RingGeometry(0.8, 1.2, 64);
+      const geo = new THREE.RingGeometry(0.5, 0.75, 64);
       const pts: THREE.Vector3[] = [];
       for (let a = 0; a <= 128; a++) {
         const ang = (a / 128) * Math.PI * 2;
-        pts.push(new THREE.Vector3(Math.cos(ang) * 1.2, Math.sin(ang) * 1.2, 0));
+        pts.push(new THREE.Vector3(Math.cos(ang) * 0.75, Math.sin(ang) * 0.75, 0));
       }
       return { fillGeo: geo, edgeGeo: null, circlePoints: pts };
     }
@@ -69,7 +69,7 @@ export default function OrbiterObject({
       {shape !== "circle" && fillGeo && (
         <>
           <mesh geometry={fillGeo}>
-            <meshBasicMaterial color="#c8c8c8" side={THREE.DoubleSide} transparent opacity={0.25} />
+            <meshBasicMaterial color="#c8c8c8" side={THREE.DoubleSide} transparent opacity={0.2} />
           </mesh>
           {edgeGeo && (
             <lineSegments geometry={edgeGeo}>
@@ -81,7 +81,7 @@ export default function OrbiterObject({
       {shape === "circle" && fillGeo && circleLine && (
         <>
           <mesh geometry={fillGeo}>
-            <meshBasicMaterial color="#c8c8c8" side={THREE.DoubleSide} transparent opacity={0.25} />
+            <meshBasicMaterial color="#c8c8c8" side={THREE.DoubleSide} transparent opacity={0.2} />
           </mesh>
           <primitive object={circleLine} />
         </>
