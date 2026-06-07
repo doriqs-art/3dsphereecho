@@ -29,17 +29,17 @@ export default function OrbiterObject({
 
   const { fillGeo, edgeGeo, circlePoints } = useMemo(() => {
     if (shape === "square") {
-      const geo = new THREE.PlaneGeometry(0.7, 0.7);
+      const geo = new THREE.PlaneGeometry(1.0, 1.0);
       return { fillGeo: geo, edgeGeo: new THREE.EdgesGeometry(geo), circlePoints: null };
     } else if (shape === "rectangle") {
-      const geo = new THREE.PlaneGeometry(1.05, 0.62);
+      const geo = new THREE.PlaneGeometry(1.5, 0.9);
       return { fillGeo: geo, edgeGeo: new THREE.EdgesGeometry(geo), circlePoints: null };
     } else {
-      const geo = new THREE.RingGeometry(0.22, 0.36, 48);
+      const geo = new THREE.RingGeometry(0.3, 0.5, 48);
       const pts: THREE.Vector3[] = [];
       for (let a = 0; a <= 64; a++) {
         const ang = (a / 64) * Math.PI * 2;
-        pts.push(new THREE.Vector3(Math.cos(ang) * 0.36, Math.sin(ang) * 0.36, 0));
+        pts.push(new THREE.Vector3(Math.cos(ang) * 0.5, Math.sin(ang) * 0.5, 0));
       }
       return { fillGeo: geo, edgeGeo: null, circlePoints: pts };
     }
@@ -49,7 +49,7 @@ export default function OrbiterObject({
     if (!circlePoints) return null;
     return new THREE.Line(
       new THREE.BufferGeometry().setFromPoints(circlePoints),
-      new THREE.LineBasicMaterial({ color: "#ffffff", transparent: true, opacity: 0.45 })
+      new THREE.LineBasicMaterial({ color: "#cccccc", transparent: true, opacity: 0.6 })
     );
   }, [circlePoints]);
 
@@ -69,11 +69,11 @@ export default function OrbiterObject({
       {shape !== "circle" && fillGeo && (
         <>
           <mesh geometry={fillGeo}>
-            <meshBasicMaterial color="#131313" side={THREE.DoubleSide} transparent opacity={0.85} />
+            <meshBasicMaterial color="#c8c8c8" side={THREE.DoubleSide} transparent opacity={0.35} />
           </mesh>
           {edgeGeo && (
             <lineSegments geometry={edgeGeo}>
-              <lineBasicMaterial color="#ffffff" transparent opacity={0.45} />
+              <lineBasicMaterial color="#dddddd" transparent opacity={0.6} />
             </lineSegments>
           )}
         </>
@@ -81,7 +81,7 @@ export default function OrbiterObject({
       {shape === "circle" && fillGeo && circleLine && (
         <>
           <mesh geometry={fillGeo}>
-            <meshBasicMaterial color="#131313" side={THREE.DoubleSide} transparent opacity={0.85} />
+            <meshBasicMaterial color="#c8c8c8" side={THREE.DoubleSide} transparent opacity={0.35} />
           </mesh>
           <primitive object={circleLine} />
         </>
