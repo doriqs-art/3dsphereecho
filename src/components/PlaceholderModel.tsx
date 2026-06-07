@@ -7,22 +7,17 @@ import * as THREE from "three";
 
 export default function PlaceholderModel() {
   const groupRef = useRef<THREE.Group>(null);
-const { scene } = useGLTF("/models/drum_set.glb");
-  
-  useEffect(() => {
-    // Auto-center the model
+  const { scene } = useGLTF("/models/drum_set.glb");
+
+  // Compute scale once from the bounding box
+  const scale = (() => {
     const box = new THREE.Box3().setFromObject(scene);
     const center = box.getCenter(new THREE.Vector3());
     scene.position.sub(center);
-
-    // Auto-scale to fit within a target size of ~2 units
     const size = box.getSize(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z);
-    const targetSize = 2.5;
-    if (groupRef.current) {
-      groupRef.current.scale.setScalar(targetSize / maxDim);
-    }
-  }, [scene]);
+    return maxDim > 0 ? 2.5 / maxDim : 1;
+  })();
 
   useFrame(({ clock }) => {
     if (!groupRef.current) return;
@@ -37,7 +32,7 @@ const { scene } = useGLTF("/models/drum_set.glb");
       <directionalLight position={[5, 5, 5]} intensity={2} />
       <directionalLight position={[-5, -2, -5]} intensity={0.8} color="#aaaaff" />
 
-      <group ref={groupRef}>
+      <group ref={groupRef} scale={scale}>
         <primitive object={scene} />
       </group>
     </>
