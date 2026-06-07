@@ -19,7 +19,7 @@ export default function PlaceholderModel() {
     const maxDim = Math.max(size.x, size.y, size.z);
 
     if (maxDim > 0) {
-      const targetSize = 5; // world-units tall — tweak to resize
+      const targetSize = 9; // world-units tall — tweak to resize
       const s = targetSize / maxDim;
       groupRef.current.scale.setScalar(s);
 
