@@ -17,9 +17,16 @@ export default function PlaceholderModel() {
   });
 
   return (
-    <group ref={groupRef} scale={0.02}>
-      <primitive object={scene} />
-    </group>
+    <>
+      {/* Lights so the model isn't black */}
+      <ambientLight intensity={1.5} />
+      <directionalLight position={[5, 5, 5]} intensity={2} />
+      <directionalLight position={[-5, -2, -5]} intensity={0.8} color="#aaaaff" />
+
+      <group ref={groupRef} scale={0.08}>
+        <primitive object={scene} />
+      </group>
+    </>
   );
 }
 
