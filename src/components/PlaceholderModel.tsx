@@ -17,7 +17,7 @@ export default function PlaceholderModel() {
   });
 
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} scale={0.02}>
       <primitive object={scene} />
     </group>
   );
