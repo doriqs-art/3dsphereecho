@@ -7,7 +7,7 @@ import OrbiterObject from "./OrbiterObject";
 import PlaceholderModel from "./PlaceholderModel";
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
-const SPHERE_RADIUS = 5.5;   // ← increase to spread shapes further apart
+const SPHERE_RADIUS = 6.5;   // ← increase to spread shapes further apart
 const COUNT = 22;             // ← decrease to reduce crowding
 const SHAPES: Array<"square" | "rectangle" | "circle"> = [
   "square", "rectangle", "circle",
@@ -50,7 +50,7 @@ export default function OrbitScene() {
         key: i,
         initialPosition: pos,
         orbitAxis: axis,
-        orbitSpeed: 0.08 + (i % 5) * 0.015,   // slight variation
+        orbitSpeed: 0.03 + (i % 5) * 0.006,   // slow, gentle drift
         pulsePhase: (i / COUNT) * Math.PI * 2,
         pulseSpeed: 0.6 + (i % 3) * 0.2,
         shape: SHAPES[i % SHAPES.length],
@@ -76,7 +76,7 @@ export default function OrbitScene() {
           fontFamily: "'Syncopate', sans-serif",
           fontWeight: 700,
           fontSize: "clamp(2rem, 5vw, 3.5rem)",
-          letterSpacing: "0.3em",
+          letterSpacing: "0.12em",
           color: "#ffffff",
           zIndex: 10,
           pointerEvents: "none",
