@@ -7,7 +7,7 @@ import TunnelBackground from "./SpaceGrid";
 import PlaceholderModel from "./PlaceholderModel";
 import OrbiterObject from "./OrbiterObject";
 
-const ORBIT_RADIUS = 4.8;
+const ORBIT_RADIUS = 6.2;
 const ORBIT_COUNT = 28;
 
 type ShapeType = "square" | "rectangle" | "circle";
@@ -75,13 +75,11 @@ export default function OrbitScene() {
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative", overflow: "hidden", background: "#131313" }}>
 
-      {/* Layer 0 — Echo tunnel background */}
       <TunnelBackground />
 
-      {/* Layer 1 — R3F orbit scene (transparent canvas on top) */}
       <div style={{ position: "fixed", inset: 0, zIndex: 1 }}>
         <Canvas
-          camera={{ position: [0, 0, 11], fov: 58, near: 0.1, far: 200 }}
+          camera={{ position: [0, 0, 13], fov: 58, near: 0.1, far: 200 }}
           gl={{ antialias: true, alpha: true }}
           style={{ background: "transparent" }}
           dpr={[1, 2]}
@@ -90,7 +88,6 @@ export default function OrbitScene() {
         </Canvas>
       </div>
 
-      {/* Layer 2 — ECHO logo */}
       <div
         style={{
           position: "fixed",
@@ -101,25 +98,14 @@ export default function OrbitScene() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          paddingTop: "2.5rem",
+          paddingTop: "2rem",
           pointerEvents: "none",
           userSelect: "none",
         }}
       >
-        <p style={{
-          fontFamily: '"Michroma", sans-serif',
-          fontSize: "clamp(0.55rem, 1vw, 0.8rem)",
-          letterSpacing: "0.28em",
-          color: "rgba(255,255,255,0.45)",
-          fontWeight: 400,
-          marginBottom: "0.25em",
-          textTransform: "uppercase",
-        }}>
-          Remember With
-        </p>
         <h1 style={{
           fontFamily: '"Syncopate", sans-serif',
-          fontSize: "clamp(2.2rem, 7vw, 6rem)",
+          fontSize: "clamp(1.4rem, 4vw, 3.5rem)",
           fontWeight: 700,
           lineHeight: 1,
           letterSpacing: "-0.02em",
