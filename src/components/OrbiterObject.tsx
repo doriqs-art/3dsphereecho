@@ -29,17 +29,17 @@ export default function OrbiterObject({
 
   const { fillGeo, edgeGeo, circlePoints } = useMemo(() => {
     if (shape === "square") {
-      const geo = new THREE.PlaneGeometry(0.9, 0.9);
+      const geo = new THREE.PlaneGeometry(1.4, 1.4);
       return { fillGeo: geo, edgeGeo: new THREE.EdgesGeometry(geo), circlePoints: null };
     } else if (shape === "rectangle") {
-      const geo = new THREE.PlaneGeometry(1.3, 0.8);
+      const geo = new THREE.PlaneGeometry(1.9, 1.2);
       return { fillGeo: geo, edgeGeo: new THREE.EdgesGeometry(geo), circlePoints: null };
     } else {
-      const geo = new THREE.RingGeometry(0.28, 0.42, 64);
+      const geo = new THREE.RingGeometry(0.42, 0.62, 64);
       const pts: THREE.Vector3[] = [];
       for (let a = 0; a <= 128; a++) {
         const ang = (a / 128) * Math.PI * 2;
-        pts.push(new THREE.Vector3(Math.cos(ang) * 0.42, Math.sin(ang) * 0.42, 0));
+        pts.push(new THREE.Vector3(Math.cos(ang) * 0.62, Math.sin(ang) * 0.62, 0));
       }
       return { fillGeo: geo, edgeGeo: null, circlePoints: pts };
     }
