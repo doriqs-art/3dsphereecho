@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
@@ -8,6 +8,13 @@ import * as THREE from "three";
 export default function PlaceholderModel() {
   const groupRef = useRef<THREE.Group>(null);
   const { scene } = useGLTF("/models/rubens.glb");
+
+  useEffect(() => {
+    // Auto-center the model regardless of its origin point
+    const box = new THREE.Box3().setFromObject(scene);
+    const center = box.getCenter(new THREE.Vector3());
+    scene.position.sub(center);
+  }, [scene]);
 
   useFrame(({ clock }) => {
     if (!groupRef.current) return;
@@ -18,7 +25,6 @@ export default function PlaceholderModel() {
 
   return (
     <>
-      {/* Lights so the model isn't black */}
       <ambientLight intensity={1.5} />
       <directionalLight position={[5, 5, 5]} intensity={2} />
       <directionalLight position={[-5, -2, -5]} intensity={0.8} color="#aaaaff" />
