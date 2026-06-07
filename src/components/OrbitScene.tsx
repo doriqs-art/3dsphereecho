@@ -5,6 +5,7 @@ import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
 import OrbiterObject from "./OrbiterObject";
 import PlaceholderModel from "./PlaceholderModel";
+import TunnelBackground from "./SpaceGrid";
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 const SPHERE_RADIUS = 6.5;   // ← increase to spread shapes further apart
@@ -66,6 +67,9 @@ export default function OrbitScene() {
         background: "#131313",
       }}
     >
+      {/* Tunnel grid background — renders on its own canvas behind R3F */}
+      <TunnelBackground />
+
       {/* ECHO title */}
       <div
         style={{
@@ -76,7 +80,7 @@ export default function OrbitScene() {
           fontFamily: "'Syncopate', sans-serif",
           fontWeight: 700,
           fontSize: "clamp(2rem, 5vw, 3.5rem)",
-          letterSpacing: "0.12em",
+          letterSpacing: "0.04em",
           color: "#ffffff",
           zIndex: 10,
           pointerEvents: "none",
@@ -86,29 +90,10 @@ export default function OrbitScene() {
         ECHO
       </div>
 
-      {/* Remember With subtitle */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: "2.5rem",
-          width: "100%",
-          textAlign: "center",
-          fontFamily: "'Michroma', sans-serif",
-          fontSize: "clamp(0.7rem, 1.5vw, 1rem)",
-          letterSpacing: "0.5em",
-          color: "rgba(255,255,255,0.45)",
-          zIndex: 10,
-          pointerEvents: "none",
-          userSelect: "none",
-        }}
-      >
-        REMEMBER WITH
-      </div>
-
       <Canvas
         camera={{ position: [0, 0, 10], fov: 60 }}
-        style={{ width: "100%", height: "100%" }}
-        gl={{ antialias: true }}
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 1 }}
+        gl={{ antialias: true, alpha: true }}
       >
         {/* Bust in the centre */}
         <PlaceholderModel />
