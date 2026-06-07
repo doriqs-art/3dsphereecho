@@ -1,122 +1,91 @@
 "use client";
 
 import { useRef, useMemo } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import TunnelBackground from "./SpaceGrid";
-import PlaceholderModel from "./PlaceholderModel";
-import OrbiterObject from "./OrbiterObject";
-
-const ORBIT_RADIUS = 4.2;
-const ORBIT_COUNT = 40;
 
 type ShapeType = "square" | "rectangle" | "circle";
 
-function fibonacciSphere(count: number, radius: number): THREE.Vector3[] {
-  const pts: THREE.Vector3[] = [];
-  const phi = Math.PI * (3 - Math.sqrt(5));
-  for (let i = 0; i < count; i++) {
-    const y = 1 - (i / (count - 1)) * 2;
-    const r = Math.sqrt(1 - y * y);
-    const theta = phi * i;
-    pts.push(new THREE.Vector3(r * Math.cos(theta) * radius, y * radius, r * Math.sin(theta) * radius));
-  }
-  return pts;
+interface OrbiterProps {
+  initialPosition: THREE.Vector3;
+  orbitAxis: THREE.Vector3;
+  orbitSpeed: number;
+  pulsePhase: number;
+  pulseSpeed: number;
+  shape: ShapeType;
 }
 
-function CameraRig() {
-  const { camera, gl } = useThree();
-  const mouse = useRef({ x: 0, y: 0 });
+export default function OrbiterObject({
+  initialPosition,
+  orbitAxis,
+  orbitSpeed,
+  pulsePhase,
+  pulseSpeed,
+  shape,
+}: OrbiterProps) {
+  const groupRef = useRef<THREE.Group>(null);
+  const posRef = useRef<THREE.Vector3>(initialPosition.clone());
+  const quatRef = useRef(new THREE.Quaternion());
 
-  useMemo(() => {
-    const onMove = (e: MouseEvent) => {
-      mouse.current.x = (e.clientX / gl.domElement.clientWidth - 0.5) * 2;
-      mouse.current.y = -(e.clientY / gl.domElement.clientHeight - 0.5) * 2;
-    };
-    window.addEventListener("mousemove", onMove);
-    return () => window.removeEventListener("mousemove", onMove);
-  }, [gl]);
+  const { fillGeo, edgeGeo, circlePoints } = useMemo(() => {
+    if (shape === "square") {
+      const geo = new THREE.PlaneGeometry(1.6, 1.6);
+      return { fillGeo: geo, edgeGeo: new THREE.EdgesGeometry(geo), circlePoints: null };
+    } else if (shape === "rectangle") {
+      const geo = new THREE.PlaneGeometry(2.2, 1.4);
+      return { fillGeo: geo, edgeGeo: new THREE.EdgesGeometry(geo), circlePoints: null };
+    } else {
+      const geo = new THREE.RingGeometry(0.5, 0.75, 64);
+      const pts: THREE.Vector3[] = [];
+      for (let a = 0; a <= 128; a++) {
+        const ang = (a / 128) * Math.PI * 2;
+        pts.push(new THREE.Vector3(Math.cos(ang) * 0.75, Math.sin(ang) * 0.75, 0));
+      }
+      return { fillGeo: geo, edgeGeo: null, circlePoints: pts };
+    }
+  }, [shape]);
 
-  useFrame(() => {
-    camera.position.x += (mouse.current.x * 0.8 - camera.position.x) * 0.04;
-    camera.position.y += (mouse.current.y * 0.5 - camera.position.y) * 0.04;
-    camera.lookAt(0, 0, 0);
+  const circleLine = useMemo(() => {
+    if (!circlePoints) return null;
+    return new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(circlePoints),
+      new THREE.LineBasicMaterial({ color: "#cccccc", transparent: true, opacity: 0.6 })
+    );
+  }, [circlePoints]);
+
+  useFrame(({ clock }) => {
+    if (!groupRef.current) return;
+    const t = clock.getElapsedTime();
+    quatRef.current.setFromAxisAngle(orbitAxis, orbitSpeed * 0.016);
+    posRef.current.applyQuaternion(quatRef.current);
+    groupRef.current.position.copy(posRef.current);
+    groupRef.current.lookAt(0, 0, 0);
+    const s = 1 + Math.sin(t * pulseSpeed + pulsePhase) * 0.04;
+    groupRef.current.scale.setScalar(s);
   });
 
-  return null;
-}
-
-function SceneContents() {
-  const orbiterData = useMemo(() => {
-    const positions = fibonacciSphere(ORBIT_COUNT, ORBIT_RADIUS);
-    const shapes: ShapeType[] = ["square", "rectangle", "circle"];
-    return positions.map((pos, i) => ({
-      initialPosition: pos,
-      orbitAxis: new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize(),
-      orbitSpeed: (0.008 + Math.random() * 0.006) * (Math.random() < 0.5 ? 1 : -1),
-      pulsePhase: Math.random() * Math.PI * 2,
-      pulseSpeed: 0.6 + Math.random() * 0.5,
-      shape: shapes[i % 3],
-    }));
-  }, []);
-
   return (
-    <>
-      <CameraRig />
-      <PlaceholderModel />
-      {orbiterData.map((props, i) => (
-        <OrbiterObject key={i} {...props} />
-      ))}
-    </>
-  );
-}
-
-export default function OrbitScene() {
-  return (
-    <div style={{ width: "100vw", height: "100vh", position: "relative", overflow: "hidden", background: "#131313" }}>
-
-      <TunnelBackground />
-
-      <div style={{ position: "fixed", inset: 0, zIndex: 1 }}>
-        <Canvas
-          camera={{ position: [0, 0, 7], fov: 75, near: 0.1, far: 200 }}
-          gl={{ antialias: true, alpha: true }}
-          style={{ background: "transparent" }}
-          dpr={[1, 2]}
-        >
-          <SceneContents />
-        </Canvas>
-      </div>
-
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 10,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          paddingTop: "2rem",
-          pointerEvents: "none",
-          userSelect: "none",
-        }}
-      >
-        <h1 style={{
-          fontFamily: '"Syncopate", sans-serif',
-          fontSize: "clamp(1.4rem, 4vw, 3.5rem)",
-          fontWeight: 700,
-          lineHeight: 1,
-          letterSpacing: "-0.02em",
-          color: "#ffffff",
-          margin: 0,
-          textTransform: "uppercase",
-        }}>
-          ECHO
-        </h1>
-      </div>
-
-    </div>
+    <group ref={groupRef}>
+      {shape !== "circle" && fillGeo && (
+        <>
+          <mesh geometry={fillGeo}>
+            <meshBasicMaterial color="#c8c8c8" side={THREE.DoubleSide} transparent opacity={0.2} />
+          </mesh>
+          {edgeGeo && (
+            <lineSegments geometry={edgeGeo}>
+              <lineBasicMaterial color="#dddddd" transparent opacity={0.55} />
+            </lineSegments>
+          )}
+        </>
+      )}
+      {shape === "circle" && fillGeo && circleLine && (
+        <>
+          <mesh geometry={fillGeo}>
+            <meshBasicMaterial color="#c8c8c8" side={THREE.DoubleSide} transparent opacity={0.2} />
+          </mesh>
+          <primitive object={circleLine} />
+        </>
+      )}
+    </group>
   );
 }
