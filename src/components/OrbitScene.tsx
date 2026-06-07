@@ -7,8 +7,8 @@ import TunnelBackground from "./SpaceGrid";
 import PlaceholderModel from "./PlaceholderModel";
 import OrbiterObject from "./OrbiterObject";
 
-const ORBIT_RADIUS = 6.2;
-const ORBIT_COUNT = 28;
+const ORBIT_RADIUS = 4.2;
+const ORBIT_COUNT = 40;
 
 type ShapeType = "square" | "rectangle" | "circle";
 
@@ -53,9 +53,9 @@ function SceneContents() {
     return positions.map((pos, i) => ({
       initialPosition: pos,
       orbitAxis: new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize(),
-      orbitSpeed: (0.010 + Math.random() * 0.007) * (Math.random() < 0.5 ? 1 : -1),
+      orbitSpeed: (0.008 + Math.random() * 0.006) * (Math.random() < 0.5 ? 1 : -1),
       pulsePhase: Math.random() * Math.PI * 2,
-      pulseSpeed: 0.8 + Math.random() * 0.6,
+      pulseSpeed: 0.6 + Math.random() * 0.5,
       shape: shapes[i % 3],
     }));
   }, []);
@@ -79,7 +79,7 @@ export default function OrbitScene() {
 
       <div style={{ position: "fixed", inset: 0, zIndex: 1 }}>
         <Canvas
-          camera={{ position: [0, 0, 13], fov: 58, near: 0.1, far: 200 }}
+          camera={{ position: [0, 0, 7], fov: 75, near: 0.1, far: 200 }}
           gl={{ antialias: true, alpha: true }}
           style={{ background: "transparent" }}
           dpr={[1, 2]}
