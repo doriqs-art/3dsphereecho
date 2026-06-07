@@ -7,8 +7,8 @@ import * as THREE from "three";
 
 export default function PlaceholderModel() {
   const groupRef = useRef<THREE.Group>(null);
-  const { scene } = useGLTF("/models/drum_set.glb");
-
+const { scene } = useGLTF("/models/drum_set.glb");
+  
   useEffect(() => {
     // Auto-center the model
     const box = new THREE.Box3().setFromObject(scene);
