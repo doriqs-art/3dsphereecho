@@ -7,7 +7,7 @@ import * as THREE from "three";
 
 export default function PlaceholderModel() {
   const groupRef = useRef<THREE.Group>(null);
-  const { scene } = useGLTF("/models/rubens.glb");
+  const { scene } = useGLTF("/models/drum_set.glb");
 
   useEffect(() => {
     // Auto-center the model regardless of its origin point
@@ -36,4 +36,4 @@ export default function PlaceholderModel() {
   );
 }
 
-useGLTF.preload("/models/rubens.glb");
+useGLTF.preload("/models/drum_set.glb");
